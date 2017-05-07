@@ -30,6 +30,9 @@
 
   <actions>
     <!-- Add your actions here -->
+    <action id="de.axp.hierarchyhighlighter.TestAction" class="TestAction" text="TestAction" description="TestAction">
+      <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt A"/>
+    </action>
   </actions>
 
 </idea-plugin>
