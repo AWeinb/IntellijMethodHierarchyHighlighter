@@ -1,17 +1,16 @@
 <idea-plugin version="2">
     <id>com.your.company.unique.plugin.id</id>
-    <name>Plugin display name here</name>
+    <name>Java Method Hierarchy Highlighter</name>
     <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <vendor email="Der_AxP@t-online.de" url="https://github.com/AWeinb/IntellijMethodHierarchyHighlighter">Github
+    </vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Plugin to highlight method call hierarchies of JAVA methods.
     ]]></description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+      * Prototype
     ]]>
     </change-notes>
 
