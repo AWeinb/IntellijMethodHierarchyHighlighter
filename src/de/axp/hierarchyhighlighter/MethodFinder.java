@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 class MethodFinder {
 
-	Set<PsiMethod> findAllChildMethodsOf(PsiElement psiMethod) {
+	Set<PsiMethod> findMethodsCalledBy(PsiElement psiMethod) {
 		List<PsiMethod> children = new ArrayList<>();
 		MethodCollector.recurseAndCollect(psiMethod, e -> children.add(e.resolveMethod()));
 		List<PsiMethod> childrenInClass = filterOutForeignMethods(children, psiMethod.getContainingFile());

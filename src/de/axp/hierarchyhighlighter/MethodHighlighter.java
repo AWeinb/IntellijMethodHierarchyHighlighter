@@ -32,7 +32,7 @@ class MethodHighlighter {
 		if (isValid(psiElement) && isInSameFile(editor, psiElement)) {
 			PsiMethod psiMethod = (PsiMethod) psiElement;
 			Set<PsiMethod> parentMethods = methodFinder.findMethodCallsOf(psiMethod);
-			Set<PsiMethod> childMethods = methodFinder.findAllChildMethodsOf(psiMethod);
+			Set<PsiMethod> childMethods = methodFinder.findMethodsCalledBy(psiMethod);
 
 			foldAll(editor, psiMethod);
 			unfoldImportant(editor, psiMethod, parentMethods, childMethods);
@@ -63,12 +63,12 @@ class MethodHighlighter {
 		Project project = editor.getProject();
 		if (project != null) {
 			PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-			methodFolder.unfoldMethods(editor, methodFinder.findAllChildMethodsOf(psiFile));
+			methodFolder.unfoldMethods(editor, methodFinder.findMethodsCalledBy(psiFile));
 		}
 	}
 
 	private void foldAll(Editor editor, PsiElement psiElement) {
-		methodFolder.foldMethods(editor, methodFinder.findAllChildMethodsOf(psiElement.getContainingFile()));
+		methodFolder.foldMethods(editor, methodFinder.findMethodsCalledBy(psiElement.getContainingFile()));
 	}
 
 	private void unfoldImportant(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
