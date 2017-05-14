@@ -41,7 +41,7 @@ class MethodBackgroundPainter {
 	}
 
 	enum PaintType {
-		PARENT_METHOD("#fff9ed"), CURRENT_METHOD("#fafff9"), CHILD_METHOD("#edfcff");
+		PARENT_METHOD("#fff9ed"), CURRENT_METHOD("#e8fff6"), CHILD_METHOD("#dbf2ff");
 
 		private AttributesFlyweight attributesFlyweight;
 
