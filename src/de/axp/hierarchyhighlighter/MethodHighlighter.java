@@ -35,9 +35,9 @@ class MethodHighlighter {
 			Set<PsiMethod> parentMethods = methodFinder.findMethodCallsOf(psiMethod);
 			Set<PsiMethod> childMethods = methodFinder.findAllChildMethodsOf(psiMethod);
 
-			foldMethodsInFile(editor, psiMethod);
-			unfoldImportantMethods(editor, psiMethod, parentMethods, childMethods);
-			paintBackgroundOfImportantMethods(editor, psiMethod, parentMethods, childMethods);
+			foldAll(editor, psiMethod);
+			unfoldImportant(editor, psiMethod, parentMethods, childMethods);
+			paintBackgrounds(editor, psiMethod, parentMethods, childMethods);
 		}
 	}
 
@@ -54,19 +54,23 @@ class MethodHighlighter {
 		return false;
 	}
 
-	private void foldMethodsInFile(Editor editor, PsiMethod psiMethod) {
-		methodFolder.foldMethods(editor, methodFinder.findAllChildMethodsOf(psiMethod.getContainingClass()));
+	private void unfoldMethodsInCurrentFile(Editor editor, PsiElement psiElement) {
+		methodFolder.unfoldMethods(editor, methodFinder.findAllChildMethodsOf(psiElement.getContainingFile()));
 	}
 
-	private void unfoldImportantMethods(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
+	private void foldAll(Editor editor, PsiElement psiElement) {
+		methodFolder.foldMethods(editor, methodFinder.findAllChildMethodsOf(psiElement.getContainingFile()));
+	}
+
+	private void unfoldImportant(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
 		HashSet<PsiMethod> psiMethodsToUnfold = new HashSet<>();
 		psiMethodsToUnfold.add(psiMethod);
 		psiMethodsToUnfold.addAll(parentMethods);
 		psiMethodsToUnfold.addAll(childMethods);
-		methodFolder.unfoldMethod(editor, psiMethodsToUnfold);
+		methodFolder.unfoldMethods(editor, psiMethodsToUnfold);
 	}
 
-	private void paintBackgroundOfImportantMethods(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
+	private void paintBackgrounds(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
 		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.CURRENT_METHOD, Sets.newHashSet(psiMethod));
 		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.PARENT_METHOD, parentMethods);
 		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.CHILD_METHOD, childMethods);

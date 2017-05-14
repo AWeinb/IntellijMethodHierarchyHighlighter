@@ -14,7 +14,7 @@ class MethodFolder {
 		editor.getFoldingModel().runBatchFoldingOperation(() -> setMethodsExpanded(editor, psiMethods, false));
 	}
 
-	void unfoldMethod(Editor editor, Set<PsiMethod> psiMethods) {
+	void unfoldMethods(Editor editor, Set<PsiMethod> psiMethods) {
 		editor.getFoldingModel().runBatchFoldingOperation(() -> setMethodsExpanded(editor, psiMethods, true));
 	}
 
