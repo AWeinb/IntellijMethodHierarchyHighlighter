@@ -12,13 +12,13 @@ class MethodFinder {
 	Set<PsiMethod> findAllChildMethodsOf(PsiMethod psiMethod) {
 		List<PsiMethod> children = new ArrayList<>();
 		MethodCollector.recurseAndCollect(psiMethod, e -> children.add(e.resolveMethod()));
-		List<PsiMethod> childrenInClass = filterOutForeignMethods(children, psiMethod.getContainingClass());
+		List<PsiMethod> childrenInClass = filterOutForeignMethods(children, psiMethod.getContainingFile());
 		return new HashSet<>(childrenInClass);
 	}
 
-	private List<PsiMethod> filterOutForeignMethods(List<PsiMethod> psiMethods, PsiClass containingClass) {
+	private List<PsiMethod> filterOutForeignMethods(List<PsiMethod> psiMethods, PsiFile psiFile) {
 		Stream<PsiMethod> psiMethodStream = psiMethods.stream()
-				.filter(m -> Objects.equals(m.getContainingClass(), containingClass));
+				.filter(m -> Objects.equals(m.getContainingFile(), psiFile));
 		return psiMethodStream.collect(Collectors.toList());
 	}
 
