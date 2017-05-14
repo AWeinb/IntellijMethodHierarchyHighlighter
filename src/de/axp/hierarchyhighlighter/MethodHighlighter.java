@@ -46,6 +46,14 @@ class MethodHighlighter {
 		unfoldMethodsInCurrentFile(editor);
 	}
 
+	private void unfoldMethodsInCurrentFile(Editor editor) {
+		Project project = editor.getProject();
+		if (project != null) {
+			PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+			methodFolder.unfoldMethods(editor, methodFinder.findMethodsCalledBy(psiFile));
+		}
+	}
+
 	private boolean isValid(PsiElement psiElement) {
 		return psiElement != null && psiElement instanceof PsiMethod;
 	}
@@ -57,14 +65,6 @@ class MethodHighlighter {
 			return Objects.equals(psiFile, psiElement.getContainingFile());
 		}
 		return false;
-	}
-
-	private void unfoldMethodsInCurrentFile(Editor editor) {
-		Project project = editor.getProject();
-		if (project != null) {
-			PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-			methodFolder.unfoldMethods(editor, methodFinder.findMethodsCalledBy(psiFile));
-		}
 	}
 
 	private void foldAll(Editor editor, PsiElement psiElement) {
