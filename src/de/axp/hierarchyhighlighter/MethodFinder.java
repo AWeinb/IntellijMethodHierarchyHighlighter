@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 class MethodFinder {
 
-	Set<PsiMethod> findAllChildMethodsOf(PsiMethod psiMethod) {
+	Set<PsiMethod> findAllChildMethodsOf(PsiElement psiMethod) {
 		List<PsiMethod> children = new ArrayList<>();
 		MethodCollector.recurseAndCollect(psiMethod, e -> children.add(e.resolveMethod()));
 		List<PsiMethod> childrenInClass = filterOutForeignMethods(children, psiMethod.getContainingFile());
@@ -22,7 +22,7 @@ class MethodFinder {
 		return psiMethodStream.collect(Collectors.toList());
 	}
 
-	Set<PsiMethod> findAllParentMethodsOf(PsiMethod childMethod) {
+	Set<PsiMethod> findMethodCallsOf(PsiMethod childMethod) {
 		List<PsiMethod> parents = new ArrayList<>();
 		MethodCollector.recurseAndCollect(childMethod.getContainingClass(), callExpression -> {
 			if (isCallOfMethod(callExpression, childMethod)) {
