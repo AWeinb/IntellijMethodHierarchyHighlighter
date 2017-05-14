@@ -22,6 +22,7 @@ class MethodHighlighter {
 
 	void highlight(Editor editor, PsiElement psiElement) {
 		methodBackgroundPainter.getPaintJobs().forEach(RangeMarker::dispose);
+		methodBackgroundPainter.getPaintJobs().clear();
 
 		if (isValid(psiElement)) {
 			PsiMethod psiMethod = (PsiMethod) psiElement;
@@ -35,13 +36,17 @@ class MethodHighlighter {
 			parentMethods.forEach(m -> methodFolder.unfoldMethod(editor, m));
 			childMethods.forEach(m -> methodFolder.unfoldMethod(editor, m));
 
-			methodBackgroundPainter.paintBackgroundOf(editor, psiMethod, PaintType.CURRENT_METHOD);
-			parentMethods.forEach(m -> methodBackgroundPainter.paintBackgroundOf(editor, m, PaintType.PARENT_METHOD));
-			childMethods.forEach(m -> methodBackgroundPainter.paintBackgroundOf(editor, m, PaintType.CHILD_METHOD));
+			paintBackgroundOfImportantMethods(editor, psiMethod, parentMethods, childMethods);
 		}
 	}
 
 	private boolean isValid(PsiElement psiElement) {
 		return psiElement != null && psiElement instanceof PsiMethod;
+	}
+
+	private void paintBackgroundOfImportantMethods(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
+		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.CURRENT_METHOD, Sets.newHashSet(psiMethod));
+		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.PARENT_METHOD, parentMethods);
+		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.CHILD_METHOD, childMethods);
 	}
 }

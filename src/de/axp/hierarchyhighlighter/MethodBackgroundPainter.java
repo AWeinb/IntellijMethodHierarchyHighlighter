@@ -5,9 +5,11 @@ import com.intellij.openapi.editor.markup.*;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiMethod;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 class MethodBackgroundPainter {
 
@@ -16,16 +18,22 @@ class MethodBackgroundPainter {
 
 	private List<RangeHighlighter> paintJobs = new ArrayList<>();
 
-	void paintBackgroundOf(Editor editor, PsiMethod psiMethod, PaintType paintType) {
+	void paintBackgroundOf(Editor editor, PaintType paintType, Set<PsiMethod> psiMethods) {
+		TextAttributes attributes = TextAttributes.fromFlyweight(paintType.getAttributesFlyweight());
+
+		for (PsiMethod psiMethod : psiMethods) {
+			RangeHighlighter highlighter = applyHighlight(editor, attributes, psiMethod);
+			paintJobs.add(highlighter);
+		}
+	}
+
+	@NotNull
+	private RangeHighlighter applyHighlight(Editor editor, TextAttributes attributes, PsiMethod psiMethod) {
 		TextRange textRange = psiMethod.getTextRange();
 		int start = textRange.getStartOffset();
 		int end = textRange.getEndOffset();
-		TextAttributes attributes = TextAttributes.fromFlyweight(paintType.getAttributesFlyweight());
-
 		MarkupModel markupModel = editor.getMarkupModel();
-		RangeHighlighter highlighter = markupModel.addRangeHighlighter(start, end, COLOR_Z_INDEX, attributes, TARGET_AREA);
-
-		paintJobs.add(highlighter);
+		return markupModel.addRangeHighlighter(start, end, COLOR_Z_INDEX, attributes, TARGET_AREA);
 	}
 
 	List<RangeHighlighter> getPaintJobs() {
