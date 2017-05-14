@@ -31,8 +31,10 @@
         <!-- Add your actions here -->
         <action id="de.axp.hierarchyhighlighter.MethodHighlightingAction"
                 class="de.axp.hierarchyhighlighter.MethodHighlightingAction"
-                text="MethodHighlightingAction" description="MethodHighlightingAction">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt A"/>
+                text="Highlight Method Hierarchy"
+                description="Hightlights parent and children of method under your mouse cursor.">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Q"/>
+            <add-to-group group-id="CodeMenu" anchor="last"/>
         </action>
     </actions>
 
