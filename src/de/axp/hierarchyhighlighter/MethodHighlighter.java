@@ -27,8 +27,7 @@ class MethodHighlighter {
 	}
 
 	void highlight(Editor editor, PsiElement psiElement) {
-		methodBackgroundPainter.getPaintJobs().forEach(RangeMarker::dispose);
-		methodBackgroundPainter.getPaintJobs().clear();
+		doCleanUp(editor);
 
 		if (isValid(psiElement) && isInSameFile(editor, psiElement)) {
 			PsiMethod psiMethod = (PsiMethod) psiElement;
@@ -39,6 +38,12 @@ class MethodHighlighter {
 			unfoldImportant(editor, psiMethod, parentMethods, childMethods);
 			paintBackgrounds(editor, psiMethod, parentMethods, childMethods);
 		}
+	}
+
+	private void doCleanUp(Editor editor) {
+		methodBackgroundPainter.getPaintJobs().forEach(RangeMarker::dispose);
+		methodBackgroundPainter.getPaintJobs().clear();
+		unfoldMethodsInCurrentFile(editor);
 	}
 
 	private boolean isValid(PsiElement psiElement) {
@@ -54,8 +59,12 @@ class MethodHighlighter {
 		return false;
 	}
 
-	private void unfoldMethodsInCurrentFile(Editor editor, PsiElement psiElement) {
-		methodFolder.unfoldMethods(editor, methodFinder.findAllChildMethodsOf(psiElement.getContainingFile()));
+	private void unfoldMethodsInCurrentFile(Editor editor) {
+		Project project = editor.getProject();
+		if (project != null) {
+			PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+			methodFolder.unfoldMethods(editor, methodFinder.findAllChildMethodsOf(psiFile));
+		}
 	}
 
 	private void foldAll(Editor editor, PsiElement psiElement) {
