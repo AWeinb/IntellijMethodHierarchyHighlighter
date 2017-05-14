@@ -60,6 +60,7 @@ class MethodFinder {
 				@Override
 				public void visitMethodCallExpression(PsiMethodCallExpression expression) {
 					methodCollector.collect(expression);
+					super.visitMethodCallExpression(expression);
 				}
 			};
 			psiElement.accept(recursiveElementVisitor);
