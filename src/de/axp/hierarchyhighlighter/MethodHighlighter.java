@@ -1,6 +1,14 @@
 package de.axp.hierarchyhighlighter;
 
-import com.google.common.collect.Sets;
+import java.awt.Color;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.project.Project;
@@ -8,11 +16,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
-import de.axp.hierarchyhighlighter.MethodBackgroundPainter.PaintType;
-
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import com.intellij.ui.JBColor;
 
 class MethodHighlighter {
 
@@ -31,12 +35,18 @@ class MethodHighlighter {
 
 		if (isValid(psiElement) && isInSameFile(editor, psiElement)) {
 			PsiMethod psiMethod = (PsiMethod) psiElement;
-			Set<PsiMethod> parentMethods = methodFinder.findMethodCallsOf(psiMethod);
 			Set<PsiMethod> childMethods = methodFinder.findMethodsCalledBy(psiMethod);
 
+			Optional<Set<PsiMethod>> childChildMethodsOpt = childMethods.stream().map(methodFinder::findMethodsCalledBy)
+					.reduce((psiMethods, psiMethods2) -> {
+						psiMethods.addAll(psiMethods2);
+						return psiMethods;
+					});
+			Set<PsiMethod> childChildMethods = childChildMethodsOpt.orElse(Collections.emptySet());
+
 			foldAll(editor, psiMethod);
-			unfoldImportant(editor, psiMethod, parentMethods, childMethods);
-			paintBackgrounds(editor, psiMethod, parentMethods, childMethods);
+			unfoldImportant(editor, psiMethod, childMethods, childChildMethods);
+			paintBackgrounds(editor, psiMethod, childMethods, childChildMethods);
 		}
 	}
 
@@ -55,7 +65,7 @@ class MethodHighlighter {
 	}
 
 	private boolean isValid(PsiElement psiElement) {
-		return psiElement != null && psiElement instanceof PsiMethod;
+		return psiElement instanceof PsiMethod;
 	}
 
 	private boolean isInSameFile(Editor editor, PsiElement psiElement) {
@@ -71,17 +81,36 @@ class MethodHighlighter {
 		methodFolder.foldMethods(editor, methodFinder.findMethodsCalledBy(psiElement.getContainingFile()));
 	}
 
-	private void unfoldImportant(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
+	private void unfoldImportant(Editor editor, PsiMethod psiMethod, Set<PsiMethod> childMethods,
+			Set<PsiMethod> childChildMethods) {
 		HashSet<PsiMethod> psiMethodsToUnfold = new HashSet<>();
 		psiMethodsToUnfold.add(psiMethod);
-		psiMethodsToUnfold.addAll(parentMethods);
 		psiMethodsToUnfold.addAll(childMethods);
+		psiMethodsToUnfold.addAll(childChildMethods);
 		methodFolder.unfoldMethods(editor, psiMethodsToUnfold);
 	}
 
-	private void paintBackgrounds(Editor editor, PsiMethod psiMethod, Set<PsiMethod> parentMethods, Set<PsiMethod> childMethods) {
-		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.CURRENT_METHOD, Sets.newHashSet(psiMethod));
-		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.PARENT_METHOD, parentMethods);
-		methodBackgroundPainter.paintBackgroundOf(editor, PaintType.CHILD_METHOD, childMethods);
+	private void paintBackgrounds(Editor editor, PsiMethod psiMethod, Set<PsiMethod> childMethods,
+			Set<PsiMethod> childChildMethods) {
+		HashSet<PsiMethod> psiMethods = new HashSet<>();
+		psiMethods.add(psiMethod);
+
+		Color defaultBackground = editor.getColorsScheme().getDefaultBackground();
+		int red = defaultBackground.getRed();
+		int green = defaultBackground.getGreen();
+		int blue = defaultBackground.getBlue();
+
+		Color colorCurrentMethod = new JBColor(getColor(red - 5, green - 5, blue), getColor(red, green, blue + 10));
+		Color colorChildMethods = new JBColor(getColor(red - 10, green - 10, blue), getColor(red, green, blue + 20));
+		Color colorChildChildMethods = new JBColor(getColor(red - 30, green - 30, blue), getColor(red, green, blue + 30));
+
+		methodBackgroundPainter.paintBackgroundOf(editor, psiMethods, colorCurrentMethod);
+		methodBackgroundPainter.paintBackgroundOf(editor, childMethods, colorChildMethods);
+		methodBackgroundPainter.paintBackgroundOf(editor, childChildMethods, colorChildChildMethods);
+	}
+
+	@NotNull
+	private Color getColor(int red, int green, int blue) {
+		return new Color(red % 256, green % 256, blue % 256);
 	}
 }

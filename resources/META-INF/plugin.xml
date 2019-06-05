@@ -1,41 +1,36 @@
-<idea-plugin version="2">
-    <id>com.your.company.unique.plugin.id</id>
-    <name>Java Method Hierarchy Highlighter</name>
-    <version>1.0</version>
-    <vendor email="Der_AxP@t-online.de" url="https://github.com/AWeinb/IntellijMethodHierarchyHighlighter">Github
-    </vendor>
+<idea-plugin>
+	<id>de.axp.hierarchyhighlighter</id>
+	<name>Java Method Hierarchy Highlighter</name>
+	<version>1.0</version>
+	<vendor email="Der_AxP@t-online.de" url="https://github.com/AWeinb/IntellijMethodHierarchyHighlighter">Github
+	</vendor>
 
-    <description><![CDATA[
-      Plugin to highlight method call hierarchies of JAVA methods.
-    ]]></description>
+	<description><![CDATA[
+			Plugin to highlight method call hierarchies of JAVA methods.
+		]]></description>
 
-    <change-notes><![CDATA[
-      * Prototype
-    ]]>
-    </change-notes>
+	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+	<idea-version since-build="173.0"/>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="145.0"/>
+	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+			 on how to target different products -->
+	<!-- uncomment to enable plugin in all products
+	<depends>com.intellij.modules.lang</depends>
+	-->
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
+	<extensions defaultExtensionNs="com.intellij">
+		<!-- Add your extensions here -->
+	</extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
-    </extensions>
-
-    <actions>
-        <!-- Add your actions here -->
-        <action id="de.axp.hierarchyhighlighter.MethodHighlightingAction"
-                class="de.axp.hierarchyhighlighter.MethodHighlightingAction"
-                text="Highlight Method Hierarchy"
-                description="Hightlights parent and children of method under your mouse cursor.">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Q"/>
-            <add-to-group group-id="CodeMenu" anchor="last"/>
-        </action>
-    </actions>
+	<actions>
+		<!-- Add your actions here -->
+		<action id="de.axp.hierarchyhighlighter.MethodHighlightingAction"
+				class="de.axp.hierarchyhighlighter.MethodHighlightingAction"
+				text="Highlight Method Hierarchy"
+				description="Hightlights parent and children of method under your mouse cursor.">
+			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt Q"/>
+			<add-to-group group-id="CodeMenu" anchor="last"/>
+		</action>
+	</actions>
 
 </idea-plugin>

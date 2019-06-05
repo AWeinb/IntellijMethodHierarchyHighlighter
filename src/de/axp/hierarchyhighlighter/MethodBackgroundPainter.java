@@ -1,15 +1,20 @@
 package de.axp.hierarchyhighlighter;
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.markup.*;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiMethod;
-import com.intellij.ui.JBColor;
-import org.jetbrains.annotations.NotNull;
-
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.AttributesFlyweight;
+import com.intellij.openapi.editor.markup.HighlighterTargetArea;
+import com.intellij.openapi.editor.markup.MarkupModel;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiMethod;
 
 class MethodBackgroundPainter {
 
@@ -18,8 +23,9 @@ class MethodBackgroundPainter {
 
 	private List<RangeHighlighter> paintJobs = new ArrayList<>();
 
-	void paintBackgroundOf(Editor editor, PaintType paintType, Set<PsiMethod> psiMethods) {
-		TextAttributes attributes = TextAttributes.fromFlyweight(paintType.getAttributesFlyweight());
+	void paintBackgroundOf(Editor editor, Set<PsiMethod> psiMethods, Color color) {
+		AttributesFlyweight attributesFlyweight = AttributesFlyweight.create(null, color, 1, null, null, null);
+		TextAttributes attributes = TextAttributes.fromFlyweight(attributesFlyweight);
 
 		for (PsiMethod psiMethod : psiMethods) {
 			RangeHighlighter highlighter = applyHighlight(editor, attributes, psiMethod);
@@ -38,19 +44,5 @@ class MethodBackgroundPainter {
 
 	List<RangeHighlighter> getPaintJobs() {
 		return paintJobs;
-	}
-
-	enum PaintType {
-		PARENT_METHOD("#fff9ed"), CURRENT_METHOD("#e8fff6"), CHILD_METHOD("#dbf2ff");
-
-		private AttributesFlyweight attributesFlyweight;
-
-		PaintType(String color) {
-			this.attributesFlyweight = AttributesFlyweight.create(null, JBColor.decode(color), 1, null, null, null);
-		}
-
-		AttributesFlyweight getAttributesFlyweight() {
-			return attributesFlyweight;
-		}
 	}
 }

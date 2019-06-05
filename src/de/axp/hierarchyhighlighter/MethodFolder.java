@@ -1,12 +1,12 @@
 package de.axp.hierarchyhighlighter;
 
+import java.util.Optional;
+import java.util.Set;
+
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiMethod;
-
-import java.util.Optional;
-import java.util.Set;
 
 class MethodFolder {
 

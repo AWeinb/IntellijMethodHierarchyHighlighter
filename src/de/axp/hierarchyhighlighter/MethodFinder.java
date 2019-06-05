@@ -1,11 +1,21 @@
 package de.axp.hierarchyhighlighter;
 
-import com.intellij.psi.*;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.intellij.psi.JavaRecursiveElementVisitor;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMethodCallExpression;
 
 class MethodFinder {
 
@@ -24,7 +34,7 @@ class MethodFinder {
 
 	Set<PsiMethod> findMethodCallsOf(PsiMethod childMethod) {
 		List<PsiMethod> parents = new ArrayList<>();
-		MethodCollector.recurseAndCollect(childMethod.getContainingClass(), callExpression -> {
+		MethodCollector.recurseAndCollect(Objects.requireNonNull(childMethod.getContainingClass()), callExpression -> {
 			if (isCallOfMethod(callExpression, childMethod)) {
 				findWhereCallHappened(callExpression).ifPresent(parents::add);
 			}
@@ -57,6 +67,7 @@ class MethodFinder {
 
 		static void recurseAndCollect(PsiElement psiElement, MethodCollector methodCollector) {
 			JavaRecursiveElementVisitor recursiveElementVisitor = new JavaRecursiveElementVisitor() {
+
 				@Override
 				public void visitMethodCallExpression(PsiMethodCallExpression expression) {
 					methodCollector.collect(expression);
